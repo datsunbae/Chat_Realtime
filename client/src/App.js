@@ -1,6 +1,6 @@
 import "./App.css";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider, Container } from '@chakra-ui/react'
 
 import HomePage from "./pages/Home";
 import ChatPage from "./pages/Chat";
@@ -8,9 +8,9 @@ import ChatPage from "./pages/Chat";
 const Root = () => {
   return (
     <>
-      <header>header</header>
-      <Outlet />
-      <footer>footer</footer>
+      <Container maxW='xl' centerContent>
+        <Outlet />
+      </Container>
     </>
   );
 };
@@ -34,9 +34,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ChakraProvider>
-      <RouterProvider router={router} />
-    </ChakraProvider>
+    <div className="app">
+      <ChakraProvider>
+        <RouterProvider router={router} />
+      </ChakraProvider>
+    </div>
   );
 }
 
