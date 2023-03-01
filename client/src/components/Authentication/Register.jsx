@@ -8,6 +8,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useToast } from '@chakra-ui/react';
+
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -16,9 +18,39 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState("");
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   const handleAvatarChange = (avatar) => {
-      console.log(avatar);
+      setLoading(true);
+      if(!avatar){
+        toast({
+          title: 'Please selected an image!',
+          status: 'warning',
+          duration: 9000,
+          isClosable: true,
+          position: 'bottom'
+        })
+        return
+      }
+
+      if(avatar.type === "image/jpeg" || avatar.type === "image/png"){
+        const data = new FormData();
+        data.append("file", avatar);
+        data.append("upload_preset", process.env.REACT_APP_UPLOAD_PRESET);
+        console.log(process.env.REACT_APP_CLOUD_NAME)
+        data.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
+        fetch( process.env.REACT_APP_URL_API_CLOUDINARY, {
+          method: "POST",
+          body: data,
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          setAvatar(data.url.toString());
+          setLoading(false);
+        })
+      }
   }
 
   const handleSubmit = () => {};
@@ -81,7 +113,7 @@ const Register = () => {
           </InputGroup>
         </FormControl>
 
-        <Button type="submit" colorScheme="purple" size="sm" style={{marginTop: "20px"}} width="100%">
+        <Button type="submit" colorScheme="purple" size="sm" style={{marginTop: "20px"}} width="100%" isLoading={loading}>
             Register
         </Button>
       </form>
