@@ -77,7 +77,7 @@ const AuthenController = {
     if(!refreshToken){
       return res.status(401).json("You're not authenticated");
     }
-    await User.updateOne({refreshToken} , {refreshToken: null});
+    await User.updateOne({refreshToken} , {refreshToken: ""});
     res.clearCookie('refreshToken');
     res.status(200).json("Login successful");
   },

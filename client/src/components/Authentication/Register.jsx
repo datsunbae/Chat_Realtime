@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useToast } from '@chakra-ui/react';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 const Register = () => {
@@ -20,6 +22,7 @@ const Register = () => {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const handleAvatarChange = (avatar) => {
       setLoading(true);
@@ -27,7 +30,7 @@ const Register = () => {
         toast({
           title: 'Please selected an image!',
           status: 'warning',
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
           position: 'bottom'
         })
@@ -53,7 +56,47 @@ const Register = () => {
       }
   }
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    if(!name || !email || !password || !confirmPassword){
+      toast({
+        title: 'Please fill all the feilds!',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      })
+      setLoading(false);
+      return;
+    }
+
+    if(password !== confirmPassword){
+      toast({
+        title: 'Password do not match',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      })
+    }
+
+    try{
+      const config = {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+
+      const {data} = await axios.post("http://localhost:5000/api/auth/register", {
+        name, email, password, avatar
+      }, config);
+      
+      setLoading(false);
+      navigate("/chats");
+    }catch(err){
+    }
+  };
 
   return (
     <VStack spacing="10px">
