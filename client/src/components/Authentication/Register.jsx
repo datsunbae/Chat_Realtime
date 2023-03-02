@@ -34,7 +34,7 @@ const Register = () => {
           isClosable: true,
           position: 'bottom'
         })
-        return
+        return;
       }
 
       if(avatar.type === "image/jpeg" || avatar.type === "image/png"){
@@ -79,6 +79,8 @@ const Register = () => {
         isClosable: true,
         position: 'bottom'
       })
+      setLoading(false);
+      return;
     }
 
     try{
@@ -88,13 +90,22 @@ const Register = () => {
         }
       }
 
-      const {data} = await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post("http://localhost:5000/api/auth/register", {
         name, email, password, avatar
       }, config);
       
       setLoading(false);
       navigate("/chats");
     }catch(err){
+      toast({
+        title: "Error Occurred!",
+        status: 'error',
+        description: err.response.data,
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom'
+      })
+      setLoading(false);
     }
   };
 
@@ -104,6 +115,7 @@ const Register = () => {
         <FormControl id="name" isRequired>
           <FormLabel>Name</FormLabel>
           <Input
+           value={name}
             placeholder="Enter your name"
             onChange={(e) => setName(e.target.value)}
           ></Input>
@@ -112,6 +124,7 @@ const Register = () => {
         <FormControl id="email" isRequired>
           <FormLabel>Email</FormLabel>
           <Input
+            value={email}
             placeholder="Enter your email"
             onChange={(e) => setEmail(e.target.value)}
           ></Input>
@@ -121,6 +134,7 @@ const Register = () => {
           <FormLabel>Password</FormLabel>
           <InputGroup>
             <Input
+             value={password}
               placeholder="Enter your password"
               onChange={(e) => setPassword(e.target.value)}
               type={show ? "text" : "password"}
@@ -137,6 +151,7 @@ const Register = () => {
           <FormLabel>Confirm Password</FormLabel>
           <InputGroup>
             <Input
+             value={confirmPassword}
               placeholder="Enter your confirm password"
               onChange={(e) => setConfirmPassword(e.target.value)}
               type={show ? "text" : "password"}
@@ -149,7 +164,6 @@ const Register = () => {
           <InputGroup>
             <Input
               accept="img/*"
-              placeholder="Enter your avatar"
               onChange={(e) => handleAvatarChange(e.target.files[0])}
               type="file"
             ></Input>
